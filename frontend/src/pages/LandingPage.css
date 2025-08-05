@@ -1,0 +1,10 @@
+/* Landing Page Styles */
+
+/* Landing Page specific custom components */
+.landing-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  transition: color 300ms, background-color 300ms;
+}
