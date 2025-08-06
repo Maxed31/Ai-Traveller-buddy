@@ -57,14 +57,16 @@ const Header = () => {
         <div className="logo-section">
           <Globe className="logo-icon" style={{ color: currentTheme.primary }} />
           <Link to="/home" className="logo-text">
-            TravelBuddy AI
+            Travel Buddy
           </Link>
         </div>
 
         {/* Navigation Links */}
         <nav className="nav-menu">
+          <Link to="/planner" className="nav-link" style={{color: currentTheme.textSecondary}}>Form Planner</Link>
+          <Link to="/chat-planner" className="nav-link" style={{color: currentTheme.textSecondary}}>Trip Planner</Link>
+          <Link to="/travel-chat" className="nav-link" style={{color: currentTheme.textSecondary}}>Travel Chat</Link>
           <Link to="/features" className="nav-link" style={{color: currentTheme.textSecondary}}>Features</Link>
-          <Link to="/pricing" className="nav-link" style={{color: currentTheme.textSecondary}}>Pricing</Link>
           <Link to="/contact" className="nav-link" style={{color: currentTheme.textSecondary}}>Contact</Link>
         </nav>
 

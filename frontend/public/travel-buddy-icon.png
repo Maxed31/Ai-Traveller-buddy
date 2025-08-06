@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background circle with gradient -->
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#42A5F5"/>
+      <stop offset="100%" style="stop-color:#1E88E5"/>
+    </radialGradient>
+    <linearGradient id="earth" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#66BB6A"/>
+      <stop offset="100%" style="stop-color:#43A047"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Main background -->
+  <circle cx="32" cy="32" r="30" fill="url(#bg)" stroke="#1565C0" stroke-width="2"/>
+  
+  <!-- Earth globe -->
+  <circle cx="32" cy="32" r="18" fill="url(#earth)" stroke="#2E7D32" stroke-width="1"/>
+  
+  <!-- Continental shapes -->
+  <path d="M20 24 Q28 20 36 24 Q44 28 48 24 Q46 36 32 40 Q18 36 20 24Z" fill="#2E7D32" opacity="0.8"/>
+  <path d="M22 40 Q30 44 38 40 Q34 48 30 44 Q26 40 22 40Z" fill="#2E7D32" opacity="0.8"/>
+  <ellipse cx="26" cy="28" rx="2" ry="3" fill="#2E7D32" opacity="0.6"/>
+  <ellipse cx="38" cy="32" rx="1.5" ry="2" fill="#2E7D32" opacity="0.6"/>
+  
+  <!-- Airplane -->
+  <g transform="translate(44, 18) rotate(35)">
+    <path d="M0 0 L8 3 L12 0 L8 -2 L6 -3 L3 -2 Z" fill="white" stroke="#E3F2FD" stroke-width="0.5"/>
+    <path d="M3 0 L6 4 L8 3 L6 -1 Z" fill="white" stroke="#E3F2FD" stroke-width="0.5"/>
+    <!-- Airplane trail -->
+    <path d="M-2 0 Q-8 -1 -12 0 Q-8 1 -2 0" fill="none" stroke="white" stroke-width="1" opacity="0.6"/>
+  </g>
+  
+  <!-- Travel destination dots/pins -->
+  <circle cx="26" cy="22" r="1.5" fill="#FF5722" stroke="white" stroke-width="0.5"/>
+  <circle cx="38" cy="28" r="1.5" fill="#FF5722" stroke="white" stroke-width="0.5"/>
+  <circle cx="30" cy="42" r="1.5" fill="#FF5722" stroke="white" stroke-width="0.5"/>
+  
+  <!-- Subtle travel route lines -->
+  <path d="M26 22 Q32 25 38 28" fill="none" stroke="white" stroke-width="1" opacity="0.4" stroke-dasharray="2,2"/>
+  <path d="M38 28 Q34 35 30 42" fill="none" stroke="white" stroke-width="1" opacity="0.4" stroke-dasharray="2,2"/>
+</svg>

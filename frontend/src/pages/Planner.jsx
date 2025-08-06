@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bot, MapPin, LoaderCircle } from 'lucide-react';
 import Header, { useTheme } from '../components/Header';
 import './Planner.css';
@@ -15,6 +15,18 @@ const Planner = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
 
+    useEffect(() => {
+        // Apply theme to body
+        document.body.style.backgroundColor = currentTheme.background;
+        document.body.style.color = currentTheme.textPrimary;
+        
+        return () => {
+            // Clean up on unmount
+            document.body.style.backgroundColor = '';
+            document.body.style.color = '';
+        };
+    }, [currentTheme]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -30,64 +42,34 @@ const Planner = () => {
         setIsLoading(true);
         setItinerary(null);
 
-        const prompt = `
-            Create a realistic day-by-day travel itinerary for a trip to ${formData.country} for ${formData.duration} days.
-            The trip should start in ${formData.startCity || 'a major city'} and end in ${formData.finalCity || 'a major city'}.
-            For each day, suggest a city or town to visit and a list of 2-3 interesting attractions or activities there.
-        `;
-
         const payload = {
-            contents: [{ role: "user", parts: [{ text: prompt }] }],
-            generationConfig: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: "OBJECT",
-                    properties: {
-                        itinerary: {
-                            type: "ARRAY",
-                            items: {
-                                type: "OBJECT",
-                                properties: {
-                                    day: { type: "NUMBER", description: "Day number of the trip" },
-                                    city: { type: "STRING", description: "City or town to visit" },
-                                    activities: {
-                                        type: "ARRAY",
-                                        description: "List of suggested activities or attractions",
-                                        items: { type: "STRING" }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            country: formData.country,
+            duration: parseInt(formData.duration),
+            startCity: formData.startCity || null,
+            finalCity: formData.finalCity || null
         };
-        
-        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
         try {
-            const response = await fetch(apiUrl, {
+            const response = await fetch('http://localhost:3001/api/generate-itinerary', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
             if (!response.ok) {
-                throw new Error(`API request failed with status ${response.status}`);
+                throw new Error(`Server request failed with status ${response.status}`);
             }
 
             const result = await response.json();
             
-            if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts[0].text) {
-                const parsedResult = JSON.parse(result.candidates[0].content.parts[0].text);
-                setItinerary(parsedResult.itinerary);
+            if (result.success && result.data) {
+                setItinerary(result.data);
             } else {
-                throw new Error("Unexpected API response structure.");
+                throw new Error(result.error || "Failed to generate itinerary");
             }
         } catch (err) {
             console.error("Error generating itinerary:", err);
-            setError("Sorry, I couldn't generate an itinerary. Please try again.");
+            setError("Sorry, I couldn't generate an itinerary. Please make sure the backend server is running and try again.");
         } finally {
             setIsLoading(false);
         }
