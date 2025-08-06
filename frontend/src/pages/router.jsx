@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LandingPage from './LandingPage';
+import Planner from './Planner';
 import { ThemeProvider, useTheme } from '../components/Header';
 import './ComingSoon.css';
 
@@ -41,6 +42,19 @@ const ComingSoon = ({ pageName }) => {
   );
 };
 
+// Page wrapper to include header in all pages
+const PageWrapper = ({ children }) => {
+  const { currentTheme } = useTheme();
+  return (
+    <div 
+      className="min-h-screen flex flex-col font-sans transition-colors duration-300"
+      style={{ backgroundColor: currentTheme.background }}
+    >
+      {children}
+    </div>
+  );
+};
+
 const AppRouter = () => {
   return (
     <Router>
@@ -50,6 +64,13 @@ const AppRouter = () => {
         
         {/* Landing page route */}
         <Route path="/home" element={<LandingPage />} />
+        
+        {/* Travel Planner route */}
+        <Route path="/planner" element={
+          <ThemeProvider>
+            <Planner />
+          </ThemeProvider>
+        } />
         
         {/* Navigation routes (placeholder for now) */}
         <Route path="/features" element={

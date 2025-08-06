@@ -55,6 +55,7 @@
   transition: transform 300ms;
   border: none;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .hero-primary-btn:hover {

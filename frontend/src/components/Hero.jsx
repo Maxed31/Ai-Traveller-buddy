@@ -1,5 +1,6 @@
 import React from 'react';
 import { Send } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useTheme } from './Header';
 import './Hero.css';
 
@@ -24,7 +25,8 @@ const Hero = () => {
         
         {/* Call to Action Section */}
         <div className="hero-actions">
-          <button 
+          <Link 
+            to="/planner"
             className="hero-primary-btn"
             style={{ 
               backgroundColor: currentTheme.primary,
@@ -33,7 +35,7 @@ const Hero = () => {
           >
             <Send size={20} />
             Start Planning Now
-          </button>
+          </Link>
           <button 
             className="hero-secondary-btn"
             style={{ 
