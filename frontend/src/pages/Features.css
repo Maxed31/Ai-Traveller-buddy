@@ -1,0 +1,348 @@
+/* Features Page Styles */
+.features-container {
+    min-height: 100vh;
+    padding-top: 80px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hero Section */
+.features-hero {
+    padding: 60px 20px 80px;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.features-hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.features-hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.features-hero-subtitle {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+.features-hero-badges {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.features-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.features-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Section Headers */
+.features-main-section,
+.features-additional-section,
+.features-cta-section {
+    padding: 80px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.features-section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.features-section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.features-section-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.8;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Main Features Grid */
+.features-main-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 32px;
+}
+
+.features-main-card {
+    padding: 40px;
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.features-main-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: height 0.3s ease;
+}
+
+.features-main-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+}
+
+.features-main-card:hover::before {
+    height: 6px;
+}
+
+.features-card-icon {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.features-card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.features-card-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    opacity: 0.9;
+}
+
+.features-card-highlights {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.features-card-highlights li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    opacity: 0.8;
+}
+
+/* Additional Features Grid */
+.features-additional-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.features-additional-card {
+    padding: 24px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.features-additional-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.features-additional-icon {
+    margin-bottom: 16px;
+}
+
+.features-additional-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.features-additional-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    opacity: 0.8;
+}
+
+/* Call to Action Section */
+.features-cta-section {
+    padding: 100px 20px;
+}
+
+.features-cta-card {
+    padding: 60px 40px;
+    border-radius: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.features-cta-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    pointer-events: none;
+}
+
+.features-cta-content {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.features-cta-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.features-cta-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+.features-cta-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.features-cta-primary,
+.features-cta-secondary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.features-cta-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    opacity: 0.9;
+}
+
+.features-cta-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .features-hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .features-hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .features-main-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    
+    .features-main-card {
+        padding: 30px 24px;
+    }
+    
+    .features-additional-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .features-additional-card {
+        padding: 20px;
+    }
+    
+    .features-section-title {
+        font-size: 2rem;
+    }
+    
+    .features-cta-title {
+        font-size: 1.75rem;
+    }
+    
+    .features-cta-card {
+        padding: 40px 24px;
+    }
+    
+    .features-cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .features-cta-primary,
+    .features-cta-secondary {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .features-hero {
+        padding: 40px 20px 60px;
+    }
+    
+    .features-main-section,
+    .features-additional-section,
+    .features-cta-section {
+        padding: 60px 20px;
+    }
+    
+    .features-hero-badges {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .features-badge {
+        width: fit-content;
+    }
+}
+
+/* Animation for theme transitions */
+.features-container * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}

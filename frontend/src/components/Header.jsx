@@ -67,7 +67,6 @@ const Header = () => {
           <Link to="/chat-planner" className="nav-link" style={{color: currentTheme.textSecondary}}>Trip Planner</Link>
           <Link to="/travel-chat" className="nav-link" style={{color: currentTheme.textSecondary}}>Travel Chat</Link>
           <Link to="/features" className="nav-link" style={{color: currentTheme.textSecondary}}>Features</Link>
-          <Link to="/pricing" className="nav-link" style={{color: currentTheme.textSecondary}}>Pricing</Link>
           <Link to="/contact" className="nav-link" style={{color: currentTheme.textSecondary}}>Contact</Link>
         </nav>
 

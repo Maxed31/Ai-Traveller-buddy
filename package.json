@@ -1,0 +1,20 @@
+{
+  "name": "ai-traveller-buddy",
+  "version": "1.0.0",
+  "description": "AI-powered travel planning application",
+  "scripts": {
+    "start": "concurrently \"npm run backend\" \"npm run frontend\" \"npm run ai\"",
+    "backend": "cd backend && npm start",
+    "frontend": "cd frontend && npm start",
+    "ai": "echo 'AI services ready'",
+    "dev": "npm start",
+    "install-all": "cd backend && npm install && cd ../frontend && npm install",
+    "stop": "cd backend && npm run stop"
+  },
+  "keywords": ["travel", "ai", "planner", "react", "nodejs"],
+  "author": "Maxed31",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -311,6 +311,98 @@ const ChatPlanner = () => {
         }
     };
 
+    const fetchPlaceImages = async (placeName, country) => {
+        try {
+            const response = await fetch('http://localhost:3001/api/search-images', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    query: placeName,
+                    country: country
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success && result.data && result.data.images) {
+                    return result.data.images[0]; // Return the first image
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching images for', placeName, ':', error);
+        }
+        
+        // Return placeholder if fetch fails
+        return {
+            url: `https://picsum.photos/400/300?random=${Math.floor(Math.random() * 1000)}`,
+            title: `${placeName} - Travel Photo`,
+            source: 'Placeholder'
+        };
+    };
+
+    const extractPlacesFromItinerary = (itineraryData) => {
+        // Extract place names from the itinerary data
+        const places = [];
+        
+        // Check if itineraryData is an array (expected format)
+        if (Array.isArray(itineraryData)) {
+            for (const day of itineraryData) {
+                // Add the city for this day
+                if (day.city && !places.includes(day.city)) {
+                    places.push(day.city);
+                }
+                
+                // Extract places from activities
+                if (day.activities && Array.isArray(day.activities)) {
+                    for (const activity of day.activities) {
+                        // Look for patterns like "Visit [Place]" or "Explore [Place]"
+                        const visitMatches = activity.match(/(?:visit|explore|see|tour)\s+([A-Z][a-zA-Z\s]+?)(?:[,\.]|$)/gi);
+                        if (visitMatches) {
+                            visitMatches.forEach(match => {
+                                const placeMatch = match.match(/(?:visit|explore|see|tour)\s+([A-Z][a-zA-Z\s]+?)(?:[,\.]|$)/i);
+                                if (placeMatch) {
+                                    const place = placeMatch[1].trim();
+                                    if (place.length > 3 && !places.includes(place)) {
+                                        places.push(place);
+                                    }
+                                }
+                            });
+                        }
+                        
+                        // Look for places mentioned with "in", "at", or specific locations
+                        const locationMatches = activity.match(/(?:in|at)\s+([A-Z][a-zA-Z\s]+?)(?:[,\.]|$)/gi);
+                        if (locationMatches) {
+                            locationMatches.forEach(match => {
+                                const locationMatch = match.match(/(?:in|at)\s+([A-Z][a-zA-Z\s]+?)(?:[,\.]|$)/i);
+                                if (locationMatch) {
+                                    const place = locationMatch[1].trim();
+                                    if (place.length > 3 && !places.includes(place)) {
+                                        places.push(place);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        } else if (typeof itineraryData === 'string') {
+            // Fallback: if it's a string, try to extract places from text
+            const lines = itineraryData.split('\n');
+            for (const line of lines) {
+                const dayMatch = line.match(/Day\s+\d+:?\s*([^-\n]+?)(?:\s*-|$)/i);
+                if (dayMatch) {
+                    const place = dayMatch[1].trim();
+                    if (place && !places.includes(place)) {
+                        places.push(place);
+                    }
+                }
+            }
+        }
+        
+        // Limit to 5 places to avoid too many API calls
+        return places.slice(0, 5);
+    };
+
     const generateItinerary = async (country, duration, startCity = null, finalCity = null) => {
         try {
             const payload = {
@@ -333,20 +425,47 @@ const ChatPlanner = () => {
             const result = await response.json();
             
             if (result.success && result.data) {
-                // Display the itinerary as a chat message
+                // Extract places from the itinerary for image search
+                const places = extractPlacesFromItinerary(result.data);
+                
+                // Display initial itinerary message
+                addMessage('bot', 'Here\'s your personalized itinerary! 🎉');
+                
+                // Add the itinerary
                 setMessages(prev => [...prev, {
-                    type: 'bot',
-                    content: 'Here\'s your personalized itinerary! 🎉',
-                    timestamp: new Date()
-                }, {
                     type: 'itinerary',
                     content: result.data,
                     timestamp: new Date()
-                }, {
-                    type: 'bot',
-                    content: 'I hope you love this itinerary! 🎒 For travel tips and general chat, visit our Travel Chat. Want to plan another trip? Just say "new trip"! ✈️',
-                    timestamp: new Date()
                 }]);
+                
+                // Fetch and display images for the places
+                if (places.length > 0) {
+                    addMessage('bot', 'Let me show you some beautiful photos of the places you\'ll visit! 📸');
+                    
+                    // Fetch images for each place
+                    for (const place of places) {
+                        try {
+                            const image = await fetchPlaceImages(place, country);
+                            if (image) {
+                                setMessages(prev => [...prev, {
+                                    type: 'image',
+                                    content: {
+                                        place: place,
+                                        image: image
+                                    },
+                                    timestamp: new Date()
+                                }]);
+                            }
+                        } catch (error) {
+                            console.error('Error fetching image for', place, ':', error);
+                        }
+                    }
+                }
+                
+                // Final message
+                setTimeout(() => {
+                    addMessage('bot', 'I hope you love this itinerary! 🎒 For travel tips and general chat, visit our Travel Chat. Want to plan another trip? Just say "new trip"! ✈️');
+                }, 1000);
                 
                 setConversationState('completed');
             } else {
@@ -419,6 +538,91 @@ const ChatPlanner = () => {
                 </div>
             );
         }
+        
+        if (message.type === 'image') {
+            return (
+                <div className="chat-place-image">
+                    <div 
+                        className="chat-place-header"
+                        style={{color: currentTheme.textPrimary, marginBottom: '8px'}}
+                    >
+                        📍 {message.content.place}
+                    </div>
+                    <div 
+                        className="chat-image-container"
+                        style={{
+                            border: `1px solid ${currentTheme.border}`,
+                            borderRadius: '8px',
+                            overflow: 'hidden'
+                        }}
+                    >
+                        <img 
+                            src={message.content.image.url}
+                            alt={message.content.image.title}
+                            className="chat-place-photo"
+                            style={{
+                                width: '100%',
+                                height: '200px',
+                                objectFit: 'cover',
+                                display: 'block'
+                            }}
+                            onError={(e) => {
+                                // Fallback to different free image services
+                                const fallbacks = [
+                                    `https://source.unsplash.com/400x300/?${encodeURIComponent(message.content.place)},travel`,
+                                    `https://picsum.photos/400/300?random=${Math.floor(Math.random() * 1000)}`,
+                                    `https://loremflickr.com/400/300/${encodeURIComponent(message.content.place)},travel`
+                                ];
+                                const currentSrc = e.target.src;
+                                const nextFallback = fallbacks.find(url => !currentSrc.includes(url.split('?')[0]));
+                                if (nextFallback) {
+                                    e.target.src = nextFallback;
+                                }
+                            }}
+                        />
+                        <div 
+                            className="chat-image-caption"
+                            style={{
+                                padding: '8px',
+                                backgroundColor: currentTheme.surface,
+                                fontSize: '12px',
+                                color: currentTheme.textSecondary
+                            }}
+                        >
+                            <div>{message.content.image.title}</div>
+                            {message.content.image.photographer && (
+                                <div style={{marginTop: '4px', fontSize: '11px'}}>
+                                    Photo by{' '}
+                                    {message.content.image.photographerUrl ? (
+                                        <a 
+                                            href={message.content.image.photographerUrl} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            style={{color: currentTheme.primary, textDecoration: 'none'}}
+                                        >
+                                            {message.content.image.photographer}
+                                        </a>
+                                    ) : (
+                                        message.content.image.photographer
+                                    )}
+                                    {message.content.image.source === 'Unsplash' && (
+                                        <span> on <a 
+                                            href="https://unsplash.com" 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            style={{color: currentTheme.primary, textDecoration: 'none'}}
+                                        >
+                                            Unsplash
+                                        </a></span>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
         return message.content;
     };
 
@@ -455,7 +659,7 @@ const ChatPlanner = () => {
                             className={`chat-message ${message.type}`}
                         >
                             <div className="chat-message-avatar">
-                                {message.type === 'bot' || message.type === 'itinerary' ? (
+                                {message.type === 'bot' || message.type === 'itinerary' || message.type === 'image' ? (
                                     <Bot size={20} style={{color: currentTheme.primary}} />
                                 ) : (
                                     <User size={20} style={{color: currentTheme.secondary}} />

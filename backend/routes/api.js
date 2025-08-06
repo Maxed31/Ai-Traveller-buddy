@@ -1,7 +1,105 @@
 const express = require('express');
 const { spawn } = require('child_process');
 const path = require('path');
+const axios = require('axios');
 const router = express.Router();
+
+// Free image search endpoint using Unsplash API
+router.post('/search-images', async (req, res) => {
+    try {
+        const { query, country } = req.body;
+        
+        if (!query) {
+            return res.status(400).json({
+                success: false,
+                error: 'Search query is required',
+                data: []
+            });
+        }
+
+        // Unsplash API configuration (free tier: 50 requests/hour)
+        const UNSPLASH_ACCESS_KEY = process.env.UNSPLASH_ACCESS_KEY;
+        
+        if (!UNSPLASH_ACCESS_KEY) {
+            console.log('Unsplash API key not configured, using free placeholder images');
+            return generatePlaceholderImages(query, country);
+        }
+
+        // Enhanced search query for better travel results
+        const searchQuery = `${query} ${country || ''} travel destination`.trim();
+        
+        const response = await axios.get('https://api.unsplash.com/search/photos', {
+            params: {
+                query: searchQuery,
+                per_page: 3,
+                orientation: 'landscape',
+                content_filter: 'high'
+            },
+            headers: {
+                'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}`
+            },
+            timeout: 10000
+        });
+
+        if (response.data && response.data.results && response.data.results.length > 0) {
+            const images = response.data.results.map(item => ({
+                url: item.urls.regular,
+                title: item.alt_description || `${query} - Travel Photo`,
+                source: 'Unsplash',
+                thumbnail: item.urls.small,
+                photographer: item.user.name,
+                photographerUrl: item.user.links.html
+            }));
+
+            return res.json({
+                success: true,
+                data: { images }
+            });
+        } else {
+            // Fallback to free services if no Unsplash results
+            return generatePlaceholderImages(query, country);
+        }
+
+    } catch (error) {
+        console.error('Error searching for images:', error.message);
+        
+        // Return free placeholder images on error
+        return generatePlaceholderImages(req.body.query, req.body.country);
+    }
+});
+
+// Helper function to generate free placeholder images
+function generatePlaceholderImages(query, country) {
+    const imageServices = [
+        'https://picsum.photos/400/300',
+        'https://source.unsplash.com/400x300',
+        'https://loremflickr.com/400/300'
+    ];
+    
+    const randomService = imageServices[Math.floor(Math.random() * imageServices.length)];
+    const searchTerm = encodeURIComponent(query.replace(/\s+/g, ','));
+    
+    let imageUrl;
+    if (randomService.includes('unsplash')) {
+        imageUrl = `${randomService}/?${searchTerm},travel,destination`;
+    } else if (randomService.includes('loremflickr')) {
+        imageUrl = `${randomService}/${searchTerm},travel`;
+    } else {
+        imageUrl = `${randomService}?random=${Math.floor(Math.random() * 1000)}`;
+    }
+    
+    return {
+        success: true,
+        data: {
+            images: [{
+                url: imageUrl,
+                title: `${query} - Travel Photo`,
+                source: 'Free Image Service',
+                thumbnail: imageUrl
+            }]
+        }
+    };
+}
 
 // Travel planner endpoint
 router.post('/generate-itinerary', async (req, res) => {

@@ -4,6 +4,8 @@ import LandingPage from './LandingPage';
 import Planner from './Planner';
 import ChatPlanner from './ChatPlanner';
 import GeneralChat from './GeneralChat';
+import Features from './Features';
+import Contact from './Contact';
 import { ThemeProvider, useTheme } from '../components/Header';
 import './ComingSoon.css';
 
@@ -99,10 +101,10 @@ const AppRouter = () => {
         {/* Legacy route for backward compatibility */}
         <Route path="/chat" element={<Navigate to="/chat-planner" replace />} />
         
-        {/* Navigation routes (placeholder for now) */}
+        {/* Navigation routes */}
         <Route path="/features" element={
           <ThemeProvider>
-            <ComingSoon pageName="Features" />
+            <Features />
           </ThemeProvider>
         } />
         <Route path="/pricing" element={
@@ -112,7 +114,7 @@ const AppRouter = () => {
         } />
         <Route path="/contact" element={
           <ThemeProvider>
-            <ComingSoon pageName="Contact" />
+            <Contact />
           </ThemeProvider>
         } />
         

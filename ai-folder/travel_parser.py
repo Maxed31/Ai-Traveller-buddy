@@ -5,8 +5,12 @@ import os
 import requests
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+# Get the directory where this script is located
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Load environment variables from the ai-folder/.env file
+env_path = os.path.join(script_dir, '.env')
+load_dotenv(env_path)
 
 def setup_ai():
     """Setup the Gemini AI configuration"""
