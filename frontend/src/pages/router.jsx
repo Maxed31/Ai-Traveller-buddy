@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LandingPage from './LandingPage';
 import Planner from './Planner';
+import ChatPlanner from './ChatPlanner';
+import GeneralChat from './GeneralChat';
 import { ThemeProvider, useTheme } from '../components/Header';
 import './ComingSoon.css';
 
@@ -16,6 +18,18 @@ import './ComingSoon.css';
 // Placeholder component for pages that don't exist yet
 const ComingSoon = ({ pageName }) => {
   const { currentTheme } = useTheme();
+  
+  React.useEffect(() => {
+    // Apply theme to body
+    document.body.style.backgroundColor = currentTheme.background;
+    document.body.style.color = currentTheme.textPrimary;
+    
+    return () => {
+      // Clean up on unmount
+      document.body.style.backgroundColor = '';
+      document.body.style.color = '';
+    };
+  }, [currentTheme]);
   
   return (
     <div 
@@ -65,12 +79,25 @@ const AppRouter = () => {
         {/* Landing page route */}
         <Route path="/home" element={<LandingPage />} />
         
-        {/* Travel Planner route */}
+        {/* Travel Planner routes */}
         <Route path="/planner" element={
           <ThemeProvider>
             <Planner />
           </ThemeProvider>
         } />
+        <Route path="/chat-planner" element={
+          <ThemeProvider>
+            <ChatPlanner />
+          </ThemeProvider>
+        } />
+        <Route path="/travel-chat" element={
+          <ThemeProvider>
+            <GeneralChat />
+          </ThemeProvider>
+        } />
+        
+        {/* Legacy route for backward compatibility */}
+        <Route path="/chat" element={<Navigate to="/chat-planner" replace />} />
         
         {/* Navigation routes (placeholder for now) */}
         <Route path="/features" element={

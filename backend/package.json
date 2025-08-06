@@ -1,19 +1,42 @@
 {
-  "name": "backend",
+  "name": "ai-traveller-buddy-backend",
   "version": "1.0.0",
+  "description": "Backend API server for AI Traveller Buddy application",
   "main": "index.js",
- "scripts": {
-  "start": "node index.js",
-  "dev": "nodemon index.js"
-},
-  "keywords": [],
-  "author": "",
+  "scripts": {
+    "start": "nodemon index.js",
+    "start-bg": "nohup nodemon index.js > server.log 2>&1 & echo 'Server started in background. Check status with: npm run status'",
+    "dev": "nodemon index.js",
+    "stop": "pkill -f 'nodemon.*index.js' || pkill -f 'node.*index.js' || lsof -ti:3001 | xargs kill -9 || echo 'No server process found'",
+    "force-stop": "sudo lsof -ti:3001 | xargs sudo kill -9 && echo 'Forcefully stopped all processes on port 3001'",
+    "status": "echo 'Checking server status...' && lsof -i:3001 || echo 'No process running on port 3001'",
+    "logs": "tail -f server.log",
+    "test": "echo 'No tests specified'",
+    "test-ai": "cd ../ai-folder && python3 travel_planner.py Italy 3 Rome",
+    "restart": "npm run stop && sleep 2 && npm start"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "api",
+    "travel",
+    "ai",
+    "backend"
+  ],
+  "author": "Maxed31",
   "license": "ISC",
-  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Maxed31/Ai-Traveller-buddy.git"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
-    "express": "^5.1.0"
+    "express": "^4.21.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

@@ -49,6 +49,9 @@ Thumbs.db
 backend/node_modules/
 backend/.env
 
+# AI folder specific
+ai-folder/.env
+
 # Frontend specific  
 frontend/node_modules/
 frontend/dist/
