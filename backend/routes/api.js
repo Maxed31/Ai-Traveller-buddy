@@ -224,12 +224,75 @@ router.post('/parse-travel-request', async (req, res) => {
             });
         }
         
+        // Quick local parsing fallback for simple messages (avoids AI calls when possible)
+        const quickParse = (text) => {
+            if (!text || typeof text !== 'string') return null;
+            const lower = text.toLowerCase();
+
+            // Duration (days/weeks)
+            const durMatch = lower.match(/(\d+)\s*(day|days|week|weeks)/i);
+            let duration = 0;
+            if (durMatch) {
+                duration = parseInt(durMatch[1], 10);
+                if (/week/i.test(durMatch[2])) duration = duration * 7;
+            }
+
+            // Country detection: look for patterns like 'to X', 'in X', 'visit X', 'go to X'
+            // Capture up to 3 words after the keyword, stop before 'for' or digits
+            const countryMatch = text.match(/(?:to|in|visit|go to)\s+([A-Za-z\s]{2,50}?)(?=(\sfor|\s\d|$))/i);
+            let country = '';
+            if (countryMatch && countryMatch[1]) {
+                country = countryMatch[1].trim();
+                // remove trailing words like 'for' if any
+                country = country.replace(/\s+for$|\s+\d+$/i, '').trim();
+            } else {
+                // as a fallback, try to extract a single capitalized word (naive)
+                const capMatch = text.match(/\b([A-Z][a-z]{2,})\b/);
+                if (capMatch) country = capMatch[1];
+            }
+
+            // Sanitize: strip common leading verbs/phrases that may have been captured
+            if (country) {
+                country = country.replace(/^(go to|to|in|visit|want to|i want to)\s+/i, '').trim();
+                // Remove any accidental leading punctuation or numbers
+                country = country.replace(/^[^A-Za-z]+/, '').replace(/\s+for$|\s+\d+$/i, '').trim();
+                // Normalize capitalization (Title Case)
+                country = country.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+            }
+
+            const hasRequiredInfo = !!(country && duration > 0);
+
+            // If we at least found country or duration, return a structured object
+            if (country || duration > 0) {
+                return {
+                    success: true,
+                    data: {
+                        country: country || '',
+                        duration: duration || 0,
+                        startCity: '',
+                        finalCity: '',
+                        hasRequiredInfo: hasRequiredInfo,
+                        parsedSuccessfully: true
+                    },
+                    error: null
+                };
+            }
+
+            return null;
+        };
+
+        // Try quick parse first
+        const quickResult = quickParse(message);
+        if (quickResult) {
+            return res.json(quickResult);
+        }
+
         // Prepare arguments for Python parsing script
         const args = [
             path.join(__dirname, '../../ai-folder/travel_parser.py'),
             message
         ];
-        
+
         // Execute Python script
         const pythonProcess = spawn('python3', args);
         
